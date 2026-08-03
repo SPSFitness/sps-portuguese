@@ -16,6 +16,8 @@ const pool = new Pool({
   ssl: process.env.DATABASE_URL?.includes('render.com') ? { rejectUnauthorized: false } : false
 });
 
+pool.on('connect', c => c.query('set search_path to pt, public'));
+
 const MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-5';
 const CHEAP_MODEL = process.env.ANTHROPIC_CHEAP_MODEL || 'claude-haiku-4-5-20251001';
 const USER_ID = Number(process.env.APP_USER_ID || 1);
