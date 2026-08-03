@@ -56,7 +56,7 @@ async function claude(prompt, { model = MODEL, maxTokens = 1600, system } = {}) 
       messages: [{ role: 'user', content: prompt }]
     })
   });
-  if (!r.ok) throw new Error(`Claude ${r.status}: ${await r.text()}`);
+  if (!r.ok) { const errText = await r.text(); console.error("CLAUDE ERROR", r.status, errText); throw new Error(`Claude ${r.status}: ${errText}`); }
   const data = await r.json();
   return data.content.filter(b => b.type === 'text').map(b => b.text).join('\n');
 }
