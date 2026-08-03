@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Português</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Karla:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div id="gate" class="gate">
+  <div class="gate-card">
+    <p class="eyebrow">Entrar</p>
+    <h1 class="display">Português<br><em>de Portugal</em></h1>
+    <input id="password" type="password" placeholder="Password" autocomplete="current-password">
+    <button id="signin" class="btn-primary">Sign in</button>
+    <p id="gate-error" class="error-line" hidden></p>
+  </div>
+</div>
+
+<div id="app" hidden>
+
+  <aside class="rail">
+    <div class="rail-head">
+      <span class="eyebrow">Nível</span>
+      <span id="level-now" class="level-now">A0</span>
+    </div>
+    <ol class="ladder" id="ladder"></ol>
+    <nav class="modes" id="modes">
+      <button data-mode="dashboard" class="mode is-on">Today</button>
+      <button data-mode="review">Review<span id="due-badge" class="badge"></span></button>
+      <button data-mode="phonics">Sound</button>
+      <button data-mode="listen">Listen</button>
+      <button data-mode="speak">Speak</button>
+      <button data-mode="write">Write</button>
+      <button data-mode="converse">Talk</button>
+      <button data-mode="assess" class="mode-gate">Level gate</button>
+    </nav>
+  </aside>
+
+  <main class="stage" id="stage">
+    <div class="loading">A carregar</div>
+  </main>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
