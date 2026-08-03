@@ -41,7 +41,7 @@ app.post('/api/login', (req, res) => {
 });
 
 // --- Claude ----------------------------------------------------------------
-async function claude(prompt, { model = MODEL, maxTokens = 1600, system } = {}) {
+async function claude(prompt, { model = MODEL, maxTokens = 8000, system } = {}) {
   const jsonMode = prompt.includes('Reply with JSON only');
   const r = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
@@ -165,7 +165,7 @@ app.post('/api/grade', auth, async (req, res) => {
     const state = await loadState();
     const text = await claude(gradePrompt({
       level: state.level, mode, task, learnerResponse
-    }), { maxTokens: 1200 });
+    }), { maxTokens: 40000 });
     const result = parseJson(text);
 
     for (const err of result.errors || []) {
@@ -205,7 +205,7 @@ Reply naturally in European Portuguese at their level. If they made a mistake, c
 briefly in English at the end under the heading Correcção, then carry on the conversation.
 Keep your Portuguese to three sentences or fewer.`;
 
-    const reply = await claude(prompt, { maxTokens: 800 });
+    const reply = await claude(prompt, { maxTokens: 4000 });
     await pool.query(`insert into turns (user_id, role, content) values ($1,'user',$2),($1,'assistant',$3)`,
       [USER_ID, message, reply]);
     res.json({ reply });
@@ -218,7 +218,7 @@ const LADDER = ['A0', 'A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
 app.post('/api/assess', auth, async (req, res) => {
   const { level, transcript } = req.body;
   try {
-    const text = await claude(assessmentPrompt(level, transcript), { maxTokens: 1200 });
+    const text = await claude(assessmentPrompt(level, transcript), { maxTokens: 40000 });
     const result = parseJson(text);
     await pool.query(
       `insert into assessments (user_id, level_tested, passed, overall, detail)
