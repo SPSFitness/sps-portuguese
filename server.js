@@ -65,7 +65,7 @@ function parseJson(text) {
   const clean = text.replace(/```json/gi, '').replace(/```/g, '').trim();
   const start = clean.indexOf('{');
   const end = clean.lastIndexOf('}');
-  if (start === -1 || end === -1) throw new Error('No JSON in model reply');
+  if (start === -1 || end === -1) throw new Error('No JSON in model reply: ' + clean.slice(0,300));
   return JSON.parse(clean.slice(start, end + 1));
 }
 
