@@ -23,11 +23,13 @@ const CHEAP_MODEL = process.env.ANTHROPIC_CHEAP_MODEL || 'claude-haiku-4-5-20251
 const USER_ID = Number(process.env.APP_USER_ID || 1);
 
 // --- simple single user gate, same pattern as the Styku app -----------------
-const tokens = new Set();
+const AUTH_TOKEN = process.env.APP_PASSWORD
+  ? crypto.createHash('sha256').update(process.env.APP_PASSWORD).digest('hex')
+  : 'open';
 function auth(req, res, next) {
   if (!process.env.APP_PASSWORD) return next();
   const t = (req.headers.authorization || '').replace('Bearer ', '');
-  if (tokens.has(t)) return next();
+  if (t === AUTH_TOKEN) return next();
   return res.status(401).json({ error: 'Not signed in' });
 }
 app.post('/api/login', (req, res) => {
@@ -35,9 +37,7 @@ app.post('/api/login', (req, res) => {
   if (req.body.password !== process.env.APP_PASSWORD) {
     return res.status(401).json({ error: 'Wrong password' });
   }
-  const t = crypto.randomBytes(24).toString('hex');
-  tokens.add(t);
-  res.json({ token: t });
+  res.json({ token: AUTH_TOKEN });
 });
 
 // --- Claude ----------------------------------------------------------------
