@@ -98,7 +98,7 @@ async function loadState() {
 
 app.get('/api/state', auth, async (req, res) => {
   try { res.json(await loadState()); }
-  catch (e) { console.error('ROUTE ERROR', req.path, e); res.status(500).json({ error: e.message }); }
+  catch (e) { console.error('ROUTE ERROR', req.path, e); res.status(500).json({ error: String(e && (e.stack || e.message)) || "unknown", code: e && e.code, detail: e && e.detail }); }
 });
 
 // --- review queue ----------------------------------------------------------
@@ -122,7 +122,7 @@ app.get('/api/review/due', auth, async (req, res) => {
       rows = rows.concat(fresh.rows.map(r => ({ ...r, isNew: true })));
     }
     res.json(rows);
-  } catch (e) { console.error('ROUTE ERROR', req.path, e); res.status(500).json({ error: e.message }); }
+  } catch (e) { console.error('ROUTE ERROR', req.path, e); res.status(500).json({ error: String(e && (e.stack || e.message)) || "unknown", code: e && e.code, detail: e && e.detail }); }
 });
 
 app.post('/api/review/grade', auth, async (req, res) => {
@@ -141,7 +141,7 @@ app.post('/api/review/grade', auth, async (req, res) => {
       [USER_ID, vocab_id, next.ease, next.interval_days, next.repetitions,
        next.lapses, next.due_at, quality]);
     res.json(next);
-  } catch (e) { console.error('ROUTE ERROR', req.path, e); res.status(500).json({ error: e.message }); }
+  } catch (e) { console.error('ROUTE ERROR', req.path, e); res.status(500).json({ error: String(e && (e.stack || e.message)) || "unknown", code: e && e.code, detail: e && e.detail }); }
 });
 
 // --- exercise generation ---------------------------------------------------
@@ -153,7 +153,7 @@ app.post('/api/exercise', auth, async (req, res) => {
       model: mode === 'vocab' ? CHEAP_MODEL : MODEL
     });
     res.json(parseJson(text));
-  } catch (e) { console.error('ROUTE ERROR', req.path, e); res.status(500).json({ error: e.message }); }
+  } catch (e) { console.error('ROUTE ERROR', req.path, e); res.status(500).json({ error: String(e && (e.stack || e.message)) || "unknown", code: e && e.code, detail: e && e.detail }); }
 });
 
 // --- grading, isolated from teaching --------------------------------------
@@ -177,7 +177,7 @@ app.post('/api/grade', auth, async (req, res) => {
        values ($1,$2,1,$3)`, [USER_ID, mode, result.correct ? 1 : 0]);
 
     res.json(result);
-  } catch (e) { console.error('ROUTE ERROR', req.path, e); res.status(500).json({ error: e.message }); }
+  } catch (e) { console.error('ROUTE ERROR', req.path, e); res.status(500).json({ error: String(e && (e.stack || e.message)) || "unknown", code: e && e.code, detail: e && e.detail }); }
 });
 
 // --- conversation ----------------------------------------------------------
@@ -207,7 +207,7 @@ Keep your Portuguese to three sentences or fewer.`;
     await pool.query(`insert into turns (user_id, role, content) values ($1,'user',$2),($1,'assistant',$3)`,
       [USER_ID, message, reply]);
     res.json({ reply });
-  } catch (e) { console.error('ROUTE ERROR', req.path, e); res.status(500).json({ error: e.message }); }
+  } catch (e) { console.error('ROUTE ERROR', req.path, e); res.status(500).json({ error: String(e && (e.stack || e.message)) || "unknown", code: e && e.code, detail: e && e.detail }); }
 });
 
 // --- level gate ------------------------------------------------------------
@@ -229,7 +229,7 @@ app.post('/api/assess', auth, async (req, res) => {
       result.new_level = next;
     }
     res.json(result);
-  } catch (e) { console.error('ROUTE ERROR', req.path, e); res.status(500).json({ error: e.message }); }
+  } catch (e) { console.error('ROUTE ERROR', req.path, e); res.status(500).json({ error: String(e && (e.stack || e.message)) || "unknown", code: e && e.code, detail: e && e.detail }); }
 });
 
 // --- stats for the dashboard ----------------------------------------------
@@ -250,7 +250,7 @@ app.get('/api/stats', auth, async (req, res) => {
                   group by d order by d`, [USER_ID])
     ]);
     res.json({ strength: strength.rows[0], errors: errors.rows, activity: activity.rows });
-  } catch (e) { console.error('ROUTE ERROR', req.path, e); res.status(500).json({ error: e.message }); }
+  } catch (e) { console.error('ROUTE ERROR', req.path, e); res.status(500).json({ error: String(e && (e.stack || e.message)) || "unknown", code: e && e.code, detail: e && e.detail }); }
 });
 
 app.get('/healthz', (req, res) => res.send('ok'));
