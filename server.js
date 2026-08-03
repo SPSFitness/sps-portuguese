@@ -42,6 +42,7 @@ app.post('/api/login', (req, res) => {
 
 // --- Claude ----------------------------------------------------------------
 async function claude(prompt, { model = MODEL, maxTokens = 1600, system } = {}) {
+  const jsonMode = prompt.includes('Reply with JSON only');
   const r = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {
@@ -53,12 +54,13 @@ async function claude(prompt, { model = MODEL, maxTokens = 1600, system } = {}) 
       model,
       max_tokens: maxTokens,
       ...(system ? { system } : {}),
-      messages: [{ role: 'user', content: prompt }]
+      messages: jsonMode ? [{ role: 'user', content: prompt }, { role: 'assistant', content: '{' }] : [{ role: 'user', content: prompt }]
     })
   });
   if (!r.ok) { const errText = await r.text(); console.error("CLAUDE ERROR", r.status, errText); throw new Error(`Claude ${r.status}: ${errText}`); }
   const data = await r.json();
-  return data.content.filter(b => b.type === 'text').map(b => b.text).join('\n');
+  const text = data.content.filter(b => b.type === 'text').map(b => b.text).join('\n');
+  return jsonMode ? '{' + text : text;
 }
 
 function parseJson(text) {
